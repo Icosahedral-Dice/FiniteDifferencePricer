@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		CA16916B2946D03F00EBB494 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA16916A2946D03F00EBB494 /* main.cpp */; };
+		CA1691732946D29700EBB494 /* EuropeanOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA1691712946D29700EBB494 /* EuropeanOption.cpp */; };
+		CA1691762946D2C600EBB494 /* finite_difference_pricer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA1691742946D2C600EBB494 /* finite_difference_pricer.cpp */; };
+		CA16917D2946E45D00EBB494 /* IterativeSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA1691772946E45D00EBB494 /* IterativeSolver.cpp */; };
+		CA16917E2946E45D00EBB494 /* Decomposer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA16917A2946E45D00EBB494 /* Decomposer.cpp */; };
+		CA16917F2946E45D00EBB494 /* LinearSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA16917B2946E45D00EBB494 /* LinearSolver.cpp */; };
+		CA1691832947B40400EBB494 /* finite_difference_engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA1691812947B40400EBB494 /* finite_difference_engine.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +31,19 @@
 /* Begin PBXFileReference section */
 		CA1691672946D03F00EBB494 /* FiniteDifferencePricer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FiniteDifferencePricer; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA16916A2946D03F00EBB494 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		CA1691712946D29700EBB494 /* EuropeanOption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EuropeanOption.cpp; sourceTree = "<group>"; };
+		CA1691722946D29700EBB494 /* EuropeanOption.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = EuropeanOption.hpp; sourceTree = "<group>"; };
+		CA1691742946D2C600EBB494 /* finite_difference_pricer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = finite_difference_pricer.cpp; sourceTree = "<group>"; };
+		CA1691752946D2C600EBB494 /* finite_difference_pricer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = finite_difference_pricer.hpp; sourceTree = "<group>"; };
+		CA1691772946E45D00EBB494 /* IterativeSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IterativeSolver.cpp; sourceTree = "<group>"; };
+		CA1691782946E45D00EBB494 /* LinearSolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LinearSolver.hpp; sourceTree = "<group>"; };
+		CA1691792946E45D00EBB494 /* IterativeSolver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IterativeSolver.hpp; sourceTree = "<group>"; };
+		CA16917A2946E45D00EBB494 /* Decomposer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decomposer.cpp; sourceTree = "<group>"; };
+		CA16917B2946E45D00EBB494 /* LinearSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinearSolver.cpp; sourceTree = "<group>"; };
+		CA16917C2946E45D00EBB494 /* Decomposer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Decomposer.hpp; sourceTree = "<group>"; };
+		CA1691802946E48500EBB494 /* EigenCommonHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EigenCommonHeader.h; sourceTree = "<group>"; };
+		CA1691812947B40400EBB494 /* finite_difference_engine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = finite_difference_engine.cpp; sourceTree = "<group>"; };
+		CA1691822947B40400EBB494 /* finite_difference_engine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = finite_difference_engine.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +77,19 @@
 			isa = PBXGroup;
 			children = (
 				CA16916A2946D03F00EBB494 /* main.cpp */,
+				CA1691812947B40400EBB494 /* finite_difference_engine.cpp */,
+				CA1691822947B40400EBB494 /* finite_difference_engine.hpp */,
+				CA1691742946D2C600EBB494 /* finite_difference_pricer.cpp */,
+				CA1691752946D2C600EBB494 /* finite_difference_pricer.hpp */,
+				CA16917A2946E45D00EBB494 /* Decomposer.cpp */,
+				CA16917C2946E45D00EBB494 /* Decomposer.hpp */,
+				CA1691772946E45D00EBB494 /* IterativeSolver.cpp */,
+				CA1691792946E45D00EBB494 /* IterativeSolver.hpp */,
+				CA16917B2946E45D00EBB494 /* LinearSolver.cpp */,
+				CA1691782946E45D00EBB494 /* LinearSolver.hpp */,
+				CA1691712946D29700EBB494 /* EuropeanOption.cpp */,
+				CA1691722946D29700EBB494 /* EuropeanOption.hpp */,
+				CA1691802946E48500EBB494 /* EigenCommonHeader.h */,
 			);
 			path = FiniteDifferencePricer;
 			sourceTree = "<group>";
@@ -119,7 +151,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA16917D2946E45D00EBB494 /* IterativeSolver.cpp in Sources */,
 				CA16916B2946D03F00EBB494 /* main.cpp in Sources */,
+				CA1691732946D29700EBB494 /* EuropeanOption.cpp in Sources */,
+				CA16917F2946E45D00EBB494 /* LinearSolver.cpp in Sources */,
+				CA1691762946D2C600EBB494 /* finite_difference_pricer.cpp in Sources */,
+				CA1691832947B40400EBB494 /* finite_difference_engine.cpp in Sources */,
+				CA16917E2946E45D00EBB494 /* Decomposer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
