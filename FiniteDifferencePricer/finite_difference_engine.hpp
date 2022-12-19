@@ -23,6 +23,8 @@ public:
     
     std::vector<std::vector<double>> RunScheme(double alpha, const std::vector<double>& x_mesh, std::size_t M, double dtau, const Euler& euler, const OptionType& option_type) const;
     
+    void PrintVector(const std::vector<double>& vec) const;
+    
 private:
     // Full run of a scheme
     std::vector<std::vector<double>> FullExplEuro(double alpha, const std::vector<double>& x_mesh, std::size_t M, double dtau) const;
@@ -50,6 +52,7 @@ private:
     
     void StepImExAmer(double tau, double alpha, const std::vector<double>& x_mesh, std::vector<double>& u_mesh, const mat& A, const mat& b_multiplier) const;
     
+    void StepExplAmerFindEarlyExBoundary(double tau, double alpha, const std::vector<double>& x_mesh, std::vector<double>& u_mesh) const;
     
 };
 

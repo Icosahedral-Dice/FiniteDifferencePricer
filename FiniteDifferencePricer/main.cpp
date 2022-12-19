@@ -59,7 +59,7 @@ void American_imex(double alpha = .45) {
     std::cout << "Crank-Nicolson, alpha = " << alpha << std::endl;
 //    std::cout << option.Put() << std::endl;
     
-    for (std::size_t i = 4; i < 257; i <<= 2) {
+    for (std::size_t i = 4; i < 5; i <<= 2) {
         PrintVector(pricer.Price(i, ImEx, American));
     }
 }
@@ -84,7 +84,7 @@ void American_imex2(double alpha = .45) {
 int main(int argc, const char * argv[]) {
     
 //    Euro_explicit();
-//    American();
+//    American_explicit();
 //    American_boundary();
 //    Euro_implicit(.45);
 //    Euro_imex(.45);
@@ -103,22 +103,21 @@ void Euro_explicit() {
     FiniteDifferencePricer pricer(37., 40, .75, .28, .03, .015);
     
     std::cout << std::setprecision(8);
-    
+    std::cout << option.Put() << std::endl;
     for (std::size_t i = 4; i < 257; i <<= 2) {
         PrintVector(pricer.Price(i, Explicit, European));
     }
 }
 
 void American_explicit() {
-    EuropeanOption option(0., 37., 40, .75, .28, .04, .02);
-    FiniteDifferencePricer pricer(37., 40, .75, .28, .04, .02);
+    EuropeanOption option(0., 42., 40, .75, .32, .02, .04);
+    FiniteDifferencePricer pricer(option);
     
     std::cout << std::setprecision(8);
     
-    for (std::size_t i = 4; i < 5; i <<= 2) {
+    for (std::size_t i = 16; i < 17; i <<= 2) {
         PrintVector(pricer.Price(i, Explicit, American));
     }
-    
 }
 //
 //void American_boundary() {

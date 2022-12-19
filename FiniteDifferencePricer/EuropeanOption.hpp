@@ -11,7 +11,7 @@
 #include <functional>
 
 class EuropeanOption {
-private:
+public:
     // t, S, K, T, sigma, r, q
     double t_;      // Current time
     double S_;      // Spot price
@@ -21,6 +21,7 @@ private:
     double r_;      // Const interest rate
     double q_;      // Dividend rate
     
+private:
     // Intermediate values for Black-Scholes pricing
     double d1_;
     double d2_;

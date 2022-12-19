@@ -7,6 +7,9 @@
 
 #include "IterativeSolver.hpp"
 #include "LinearSolver.hpp"
+#include <iostream>
+
+double IterativeSolver::omega_ = 1.2;
 
 IterativeSolver::IterativeSolver(const mat& A, const vec& b) : A_(A), b_(b) {
     x0_ = vec::Zero(b.size());
@@ -52,6 +55,8 @@ std::tuple<mat, vec> IterativeSolver::GaussSeidel_RC(const mat& A, const vec& b)
 }
 
 std::tuple<mat, vec> IterativeSolver::SOR_RC(const mat& A, const vec& b, double omega) const {
+    
+    omega_ = omega;
     
     mat L, D, U;
     std::tie(L, D, U) = this->LDU(A);
@@ -185,6 +190,95 @@ std::tuple<vec, unsigned> IterativeSolver::RecursionProjected_lower(const vec& x
     return std::make_tuple(xold, iter_N);
 }
 
+std::tuple<vec, unsigned> IterativeSolver::RecursionProjected_lowerelementwise(const vec& x0, const mat& R, const vec& c, const mat& A, const vec& b, const StoppingCriterion& criterion, const double tolerance, const vec& bound, double alpha, double xleft, double xright) const {
+    
+    unsigned iter_N = 0;
+    vec xold(x0);
+    std::size_t N = xold.size();
+//    std::cout << "...." << x0.size() << b.size() << std::endl;
+    
+    switch (criterion) {
+        case StoppingCriterion::consecutive:
+        {
+            // Consecutive approximation criterion
+            vec diff(vec::Ones(xold.size()));
+            vec xnew(xold.size());
+            while (diff.norm() > tolerance) {
+                
+                xnew[0] = std::max(bound[0],
+                                   ((1. - omega_) * xold[0])
+                                   + ((omega_ * alpha) / (2. * (1. + alpha)) * (xleft + xold[0 + 1]))
+                                   + (omega_ / (1. + alpha) * b[0]));
+                for (std::size_t pos = 1; pos < N - 1; pos++) {
+                    xnew[pos] = std::max(bound[pos],
+                                         ((1. - omega_) * xold[pos])
+                                         + ((omega_ * alpha) / (2. * (1. + alpha)) * (xnew[pos - 1] + xold[pos + 1]))
+                                         + (omega_ / (1. + alpha) * b[pos]));
+                }
+                xnew[N - 1] = std::max(bound[N - 1],
+                                       ((1. - omega_) * xold[N - 1])
+                                       + ((omega_ * alpha) / (2. * (1. + alpha)) * (xnew[N - 1] + xright))
+                                       + (omega_ / (1. + alpha) * b[N - 1]));
+                
+                diff = xnew - xold;
+                xold = xnew;
+                iter_N++;
+            }
+            break;
+        }
+        case StoppingCriterion::residual:
+        {
+            // Residual-based criterion
+            vec r(b - A * xold);
+            vec xnew(xold.size());
+            double residual_criterion = tolerance * r.norm();
+            while (r.norm() > residual_criterion) {
+                xnew[0] = std::max(bound[0],
+                                   ((1. - omega_) * xold[0])
+                                   + ((omega_ * alpha) / (2. * (1. + alpha)) * (xleft + xold[0 + 1]))
+                                   + (omega_ / (1. + alpha) * b[0]));
+                for (std::size_t pos = 1; pos < N - 1; pos++) {
+                    xnew[pos] = std::max(bound[pos],
+                                         ((1. - omega_) * xold[pos])
+                                         + ((omega_ * alpha) / (2. * (1. + alpha)) * (xnew[pos - 1] + xold[pos + 1]))
+                                         + (omega_ / (1. + alpha) * b[pos]));
+                }
+                xnew[N - 1] = std::max(bound[N - 1],
+                                       ((1. - omega_) * xold[N - 1])
+                                       + ((omega_ * alpha) / (2. * (1. + alpha)) * (xnew[N - 1] + xright))
+                                       + (omega_ / (1. + alpha) * b[N - 1]));
+                
+                
+                r = b - A * xnew;
+                xold = xnew;
+                iter_N++;
+            }
+            break;
+        }
+            //        case StoppingCriterion::combined:
+            //        {
+            //            // Combined criteria
+            //            vec r(b - A * xold);
+            //            vec diff(xold.Identity());
+            //            vec xnew(xold.size());
+            //            double residual_criterion = tolerance * r.norm();
+            //            while (r.norm() > residual_criterion) {
+            //                xnew = R * xold + c;
+            //                r = b - A * xold;
+            //                xold = xnew;
+            //            }
+            //            break;
+            //        }
+        default:
+        {
+            // Do nothing
+        }
+            break;
+    }
+    
+    return std::make_tuple(xold, iter_N);
+}
+
 
 
 std::tuple<vec, unsigned> IterativeSolver::Jacobi(const StoppingCriterion& criterion, double tolerance) const {
@@ -231,4 +325,16 @@ std::tuple<vec, unsigned> IterativeSolver::SORProjected_lower(double omega, cons
     return this->RecursionProjected_lower(x0_, R, c, A_, b_, criterion, tolerance, bound);
 }
 
+std::tuple<vec, unsigned> IterativeSolver::SORProjected_lowerelementwise(double omega, const StoppingCriterion& criterion, double tolerance, const vec& bound, double alpha, double xleft, double xright) const {
+    
+    mat R;
+    vec c;
+    std::tie(R, c) = SOR_RC(A_, b_, omega);
+    
+//    std::cout << "RC" << std::endl;
+//    std::cout << R << std::endl;
+//    std::cout << c << std::endl;
+    
+    return this->RecursionProjected_lowerelementwise(x0_, R, c, A_, b_, criterion, tolerance, bound, alpha, xleft, xright);
+}
 

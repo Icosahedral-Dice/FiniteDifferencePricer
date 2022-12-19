@@ -11,6 +11,8 @@
 #include "IterativeSolver.hpp"
 #include "LinearSolver.hpp"
 
+#include <iostream>
+
 FiniteDifferenceEngine::FiniteDifferenceEngine(const FiniteDifferencePricer* pricer) : pricer_(pricer) {}
 
 std::vector<std::vector<double>> FiniteDifferenceEngine::RunScheme(double alpha, const std::vector<double>& x_mesh, std::size_t M, double dtau, const Euler& euler, const OptionType& option_type) const {
@@ -47,15 +49,19 @@ std::vector<std::vector<double>> FiniteDifferenceEngine::FullExplEuro(double alp
     std::vector<double> u_mesh(x_mesh.size());
     std::transform(x_mesh.cbegin(), x_mesh.cend(), u_mesh.begin(), pricer_->boundary_tau_0_);
     
+    // Print u_mesh
+    
     // Advance M-1 times
     for (std::size_t i = 1; i < M; i++) {
         double curr_tau = dtau * i;
         this->StepExplEuro(curr_tau, alpha, x_mesh, u_mesh);
+        // Print u_mesh
     }
     
     // Record the (M-1)th u_mesh for theta calculation
     std::vector<double> u_mesh_prev = u_mesh;
     this->StepExplEuro(pricer_->tau_final_, alpha, x_mesh, u_mesh);
+    // Print u_mesh
     
     return std::vector<std::vector<double>>({u_mesh, u_mesh_prev});
     
@@ -154,7 +160,7 @@ std::vector<std::vector<double>> FiniteDifferenceEngine::FullExplAmer(double alp
     // Advance M-1 times
     for (std::size_t i = 1; i < M; i++) {
         double curr_tau = dtau * i;
-        this->StepExplAmer(curr_tau, alpha, x_mesh, u_mesh);
+        this->StepExplAmerFindEarlyExBoundary(curr_tau, alpha, x_mesh, u_mesh);
     }
     
     // Record the (M-1)th u_mesh for theta calculation
@@ -170,6 +176,7 @@ std::vector<std::vector<double>> FiniteDifferenceEngine::FullImExAmer(double alp
     // Fill u mesh with boundary condition
     std::vector<double> u_mesh(x_mesh.size());
     std::transform(x_mesh.cbegin(), x_mesh.cend(), u_mesh.begin(), pricer_->boundary_tau_0_);
+    this->PrintVector(u_mesh);
     
     mat A(mat::Zero(x_mesh.size() - 2, x_mesh.size() - 2));   // Initialize with zero matrix
     A(0, 0) = 1. + alpha;
@@ -195,11 +202,13 @@ std::vector<std::vector<double>> FiniteDifferenceEngine::FullImExAmer(double alp
     for (std::size_t i = 1; i < M; i++) {
         double curr_tau = dtau * i;
         this->StepImExAmer(curr_tau, alpha, x_mesh, u_mesh, A, b_multiplier);
+        this->PrintVector(u_mesh);
     }
     
     // Record the (M-1)th u_mesh for theta calculation
     std::vector<double> u_mesh_prev = u_mesh;
     this->StepImExAmer(pricer_->tau_final_, alpha, x_mesh, u_mesh, A, b_multiplier);
+    this->PrintVector(u_mesh);
     
     return std::vector<std::vector<double>>({u_mesh, u_mesh_prev});
 }
@@ -256,8 +265,8 @@ void FiniteDifferenceEngine::StepImExEuro(double tau, double alpha, const std::v
     // Boundary conditions
     b(0) += pricer_->boundary_x_l_(tau) * alpha * .5;
     b(b.size() - 1) += pricer_->boundary_x_r_(tau) * alpha * .5;
-    b(0) += *(u_mesh.cbegin()) * alpha * .5;
-    b(b.size() - 1) += *(u_mesh.crbegin()) * alpha * .5;
+    b(0) += u_mesh.front() * alpha * .5;
+    b(b.size() - 1) += u_mesh.back() * alpha * .5;
     
     // Solve linear system
     LinearSolver substituter;
@@ -291,11 +300,51 @@ void FiniteDifferenceEngine::StepExplAmer(double tau, double alpha, const std::v
         }
         
         // Compare and add to mesh
+        
         new_u_mesh.push_back(std::max(euro_val, early_ex_premium));
     }
     
     // Right boundary
     new_u_mesh.push_back(pricer_->boundary_x_r_(tau));
+    
+    u_mesh = std::move(new_u_mesh);
+}
+
+void FiniteDifferenceEngine::StepExplAmerFindEarlyExBoundary(double tau, double alpha, const std::vector<double>& x_mesh, std::vector<double>& u_mesh) const {
+    std::vector<double> new_u_mesh;
+    
+    // Left boundary
+    new_u_mesh.push_back(pricer_->boundary_x_l_(tau));
+    
+    std::size_t early_ex_pos = 0; // MODIFIED
+    
+    // Middle values
+    for (std::size_t pos = 1; pos < x_mesh.size() - 1; pos++) {
+        // Get the corresponding European option's value
+        double euro_val = alpha * u_mesh[pos - 1] + (1. - 2. * alpha) * u_mesh[pos] + alpha * u_mesh[pos + 1];
+        
+        // Find early exercise
+        double early_ex_premium = 0.;
+        
+        if (x_mesh[pos] < 0.) {
+            early_ex_premium = pricer_->K_ * std::exp(pricer_->a_ * x_mesh[pos] + pricer_->b_ * tau) * (1. - std::exp(x_mesh[pos]));
+        }
+        
+        // Compare and add to mesh
+        if (early_ex_premium > euro_val) {
+            early_ex_pos = pos; // MODIFIED
+        }
+        
+        new_u_mesh.push_back(std::max(euro_val, early_ex_premium));
+    }
+    
+    // Right boundary
+    new_u_mesh.push_back(pricer_->boundary_x_r_(tau));
+    
+    double S_boundary_lower = pricer_->K_ * std::exp(x_mesh[early_ex_pos]); // MODIFIED
+    double S_boundary_upper = pricer_->K_ * std::exp(x_mesh[early_ex_pos + 1]); // MODIFIED
+    
+    std::cout << (S_boundary_lower + S_boundary_upper) / 2. << std::endl; // MODIFIED
     
     u_mesh = std::move(new_u_mesh);
 }
@@ -316,35 +365,55 @@ void FiniteDifferenceEngine::StepImExAmer(double tau, double alpha, const std::v
     // Boundary conditions
     b(0) += pricer_->boundary_x_l_(tau) * alpha * .5;
     b(b.size() - 1) += pricer_->boundary_x_r_(tau) * alpha * .5;
-    b(0) += *(u_mesh.cbegin()) * alpha * .5;
-    b(b.size() - 1) += *(u_mesh.crbegin()) * alpha * .5;
+    b(0) += u_mesh.front() * alpha * .5;
+    b(b.size() - 1) += u_mesh.back() * alpha * .5;
     
     double old_right_boundary = *(u_mesh.rbegin());
     
     // Add boundary condition
-    *(u_mesh.begin()) = pricer_->boundary_x_l_(tau);
-    *(u_mesh.rbegin()) = pricer_->boundary_x_r_(tau);
+    u_mesh.front() = pricer_->boundary_x_l_(tau);
+    u_mesh.back() = pricer_->boundary_x_r_(tau);
     
     auto find_early_ex = [=](double x)->double {
-        if (x < 1.) {
+        if (x < 0.) {
             return pricer_->K_ * std::exp(pricer_->a_ * x + pricer_->b_ * tau) * (1. - std::exp(x));
         } else {
             return 0.;
         }
     };
     
-    vec early_ex_premium(x_mesh.size() - 2);
-    std::copy(x_mesh.cbegin() + 1, x_mesh.cend() - 1, early_ex_premium.begin());
-    std::transform(early_ex_premium.begin(), early_ex_premium.end(), early_ex_premium.begin(), find_early_ex);
+//    vec early_ex_premium(x_mesh.size() - 2);
+//    std::copy(x_mesh.cbegin() + 1, x_mesh.cend() - 1, early_ex_premium.begin());
+//    std::transform(early_ex_premium.begin(), early_ex_premium.end(), early_ex_premium.begin(), find_early_ex);
+//
+//    // Solve linear system
+//    double tolerance = std::pow(10, -6);
+//    double omega = 1.2;
+//
+//    IterativeSolver solver(A, b, early_ex_premium);
+//    vec sol(b.size());
+//    std::tie(sol, std::ignore) = solver.SORProjected_lower(omega, StoppingCriterion::consecutive, tolerance, early_ex_premium);
     
+    vec early_ex_premium(x_mesh.size() - 2);
+    std::transform(x_mesh.cbegin() + 1, x_mesh.cend() - 1, early_ex_premium.begin(), find_early_ex);
+
     // Solve linear system
     double tolerance = std::pow(10, -6);
     double omega = 1.2;
-    
+
     IterativeSolver solver(A, b, early_ex_premium);
     vec sol(b.size());
-    std::tie(sol, std::ignore) = solver.SORProjected_lower(omega, StoppingCriterion::consecutive, tolerance, early_ex_premium);
+
+    std::tie(sol, std::ignore) = solver.SORProjected_lowerelementwise(omega, StoppingCriterion::consecutive, tolerance, early_ex_premium, alpha, u_mesh.front(), old_right_boundary);
+    
     
     // Assign to new u_mesh
     std::copy(sol.cbegin(), sol.cend(), u_mesh.begin() + 1);
+}
+
+void FiniteDifferenceEngine::PrintVector(const std::vector<double>& vec) const {
+    for (double elem : vec) {
+        std::cout << elem << '\t';
+    }
+    std::cout << std::endl;
 }

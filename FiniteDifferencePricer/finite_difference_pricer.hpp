@@ -76,6 +76,7 @@ private:
     
 public:
     FiniteDifferencePricer(double S0, double K, double T, double sigma, double r, double q);
+    FiniteDifferencePricer(const EuropeanOption& option);
     ~FiniteDifferencePricer() = default;
     void PrintVector(const std::vector<double>& vec) const;
     
