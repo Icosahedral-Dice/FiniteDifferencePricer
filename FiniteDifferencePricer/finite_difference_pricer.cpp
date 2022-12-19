@@ -30,7 +30,7 @@ FiniteDifferencePricer::FiniteDifferencePricer(double S0, double K, double T, do
     b_ = (a_ + 1.) * (a_ + 1.) + 2. * q / sigma2;
 }
 
-FiniteDifferencePricer::FiniteDifferencePricer(const EuropeanOption& option) : FiniteDifferencePricer(option.S_, option.K_, option.T_, option.sigma_, option.q_, option.r_) {}
+FiniteDifferencePricer::FiniteDifferencePricer(const EuropeanOption& option) : FiniteDifferencePricer(option.S_, option.K_, option.T_, option.sigma_, option.r_, option.q_) {}
 
 void FiniteDifferencePricer::PrintVector(const std::vector<double>& vec) const {
     for (auto elem : vec) {

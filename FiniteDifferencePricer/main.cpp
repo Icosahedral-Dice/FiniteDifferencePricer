@@ -10,6 +10,7 @@
 
 #include "EuropeanOption.hpp"
 #include "finite_difference_pricer.hpp"
+#include "finite_difference_pricer_discrete_dividend.hpp"
 
 void PrintVector(const std::vector<double>& vec) {
     for (auto elem : vec) {
@@ -79,12 +80,20 @@ void American_imex2(double alpha = .45) {
     }
 }
 
+void AmericanDiscDiv(double alpha = .4) {
+    FiniteDifferencePricerDiscreteDividend::alpha_temp_ = 4;
+    
+    EuropeanOption option(0., 52., 50., 1., .2, .03, 0.);
+    FiniteDifferencePricerDiscreteDividend pricer(option, 5. / 12., .01);
+    
+    PrintVector(pricer.PriceCall(4, ImEx, American));
+}
 
 
 int main(int argc, const char * argv[]) {
     
 //    Euro_explicit();
-    American_explicit();
+//    American_explicit();
 //    American_boundary();
 //    Euro_implicit(.45);
 //    Euro_imex(.45);
@@ -93,6 +102,11 @@ int main(int argc, const char * argv[]) {
     
 //    American_imex(.45);
 //    American_imex(5.);
+    std::cout << std::fixed << std::setprecision(6);
+    
+    
+    AmericanDiscDiv(.4);
+    
     
     return 0;
 }

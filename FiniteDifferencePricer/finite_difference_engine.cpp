@@ -369,7 +369,7 @@ void FiniteDifferenceEngine::StepImExAmer(double tau, double alpha, const std::v
     b(0) += u_mesh.front() * alpha * .5;
     b(b.size() - 1) += u_mesh.back() * alpha * .5;
     
-    double old_right_boundary = *(u_mesh.rbegin());
+//    double old_right_boundary = *(u_mesh.rbegin());
     
     // Add boundary condition
     u_mesh.front() = pricer_->boundary_x_l_(tau);
