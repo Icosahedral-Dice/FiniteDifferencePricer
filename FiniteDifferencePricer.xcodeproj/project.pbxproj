@@ -14,6 +14,7 @@
 		CA16917E2946E45D00EBB494 /* Decomposer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA16917A2946E45D00EBB494 /* Decomposer.cpp */; };
 		CA16917F2946E45D00EBB494 /* LinearSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA16917B2946E45D00EBB494 /* LinearSolver.cpp */; };
 		CA1691832947B40400EBB494 /* finite_difference_engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA1691812947B40400EBB494 /* finite_difference_engine.cpp */; };
+		CA8EF8FA29501DA1007F6AAA /* finite_difference_pricer_discrete_dividend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA8EF8F829501DA1007F6AAA /* finite_difference_pricer_discrete_dividend.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +45,8 @@
 		CA1691802946E48500EBB494 /* EigenCommonHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EigenCommonHeader.h; sourceTree = "<group>"; };
 		CA1691812947B40400EBB494 /* finite_difference_engine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = finite_difference_engine.cpp; sourceTree = "<group>"; };
 		CA1691822947B40400EBB494 /* finite_difference_engine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = finite_difference_engine.hpp; sourceTree = "<group>"; };
+		CA8EF8F829501DA1007F6AAA /* finite_difference_pricer_discrete_dividend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = finite_difference_pricer_discrete_dividend.cpp; sourceTree = "<group>"; };
+		CA8EF8F929501DA1007F6AAA /* finite_difference_pricer_discrete_dividend.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = finite_difference_pricer_discrete_dividend.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,8 @@
 				CA1691822947B40400EBB494 /* finite_difference_engine.hpp */,
 				CA1691742946D2C600EBB494 /* finite_difference_pricer.cpp */,
 				CA1691752946D2C600EBB494 /* finite_difference_pricer.hpp */,
+				CA8EF8F829501DA1007F6AAA /* finite_difference_pricer_discrete_dividend.cpp */,
+				CA8EF8F929501DA1007F6AAA /* finite_difference_pricer_discrete_dividend.hpp */,
 				CA16917A2946E45D00EBB494 /* Decomposer.cpp */,
 				CA16917C2946E45D00EBB494 /* Decomposer.hpp */,
 				CA1691772946E45D00EBB494 /* IterativeSolver.cpp */,
@@ -155,6 +160,7 @@
 				CA16916B2946D03F00EBB494 /* main.cpp in Sources */,
 				CA1691732946D29700EBB494 /* EuropeanOption.cpp in Sources */,
 				CA16917F2946E45D00EBB494 /* LinearSolver.cpp in Sources */,
+				CA8EF8FA29501DA1007F6AAA /* finite_difference_pricer_discrete_dividend.cpp in Sources */,
 				CA1691762946D2C600EBB494 /* finite_difference_pricer.cpp in Sources */,
 				CA1691832947B40400EBB494 /* finite_difference_engine.cpp in Sources */,
 				CA16917E2946E45D00EBB494 /* Decomposer.cpp in Sources */,

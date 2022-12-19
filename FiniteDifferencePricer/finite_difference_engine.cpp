@@ -160,6 +160,7 @@ std::vector<std::vector<double>> FiniteDifferenceEngine::FullExplAmer(double alp
     // Advance M-1 times
     for (std::size_t i = 1; i < M; i++) {
         double curr_tau = dtau * i;
+        // this->StepExplAmer(curr_tau, alpha, x_mesh, u_mesh);
         this->StepExplAmerFindEarlyExBoundary(curr_tau, alpha, x_mesh, u_mesh);
     }
     

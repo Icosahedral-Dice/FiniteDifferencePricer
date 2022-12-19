@@ -84,15 +84,15 @@ void American_imex2(double alpha = .45) {
 int main(int argc, const char * argv[]) {
     
 //    Euro_explicit();
-//    American_explicit();
+    American_explicit();
 //    American_boundary();
 //    Euro_implicit(.45);
 //    Euro_imex(.45);
 //    Euro_implicit(5);
 //    Euro_imex(5);
     
-    American_imex(.45);
-    American_imex(5.);
+//    American_imex(.45);
+//    American_imex(5.);
     
     return 0;
 }

@@ -23,7 +23,7 @@ enum OptionType {
 };
 
 class FiniteDifferencePricer {
-private:
+protected:
     // Option data
     double S0_;
     double K_;
