@@ -190,13 +190,14 @@ std::tuple<vec, unsigned> IterativeSolver::RecursionProjected_lower(const vec& x
     return std::make_tuple(xold, iter_N);
 }
 
-std::tuple<vec, unsigned> IterativeSolver::RecursionProjected_lowerelementwise(const vec& x0, const mat& R, const vec& c, const mat& A, const vec& b, const StoppingCriterion& criterion, const double tolerance, const vec& bound, double alpha, double xleft, double xright) const {
+std::tuple<vec, unsigned> IterativeSolver::RecursionProjected_lowerelementwise(const vec& x0, const mat& R, const vec& c, const mat& A, const vec& b, const StoppingCriterion& criterion, const double tolerance, const vec& bound, double alpha) const {
     
     unsigned iter_N = 0;
     vec xold(x0);
     std::size_t N = xold.size();
 //    std::cout << "...." << x0.size() << b.size() << std::endl;
-    
+    double xleft = 0.;
+    double xright = 0.;
     switch (criterion) {
         case StoppingCriterion::consecutive:
         {
@@ -217,7 +218,7 @@ std::tuple<vec, unsigned> IterativeSolver::RecursionProjected_lowerelementwise(c
                 }
                 xnew[N - 1] = std::max(bound[N - 1],
                                        ((1. - omega_) * xold[N - 1])
-                                       + ((omega_ * alpha) / (2. * (1. + alpha)) * (xnew[N - 1] + xright))
+                                       + ((omega_ * alpha) / (2. * (1. + alpha)) * (xnew[N - 1 - 1] + xright))
                                        + (omega_ / (1. + alpha) * b[N - 1]));
                 
                 diff = xnew - xold;
@@ -325,7 +326,7 @@ std::tuple<vec, unsigned> IterativeSolver::SORProjected_lower(double omega, cons
     return this->RecursionProjected_lower(x0_, R, c, A_, b_, criterion, tolerance, bound);
 }
 
-std::tuple<vec, unsigned> IterativeSolver::SORProjected_lowerelementwise(double omega, const StoppingCriterion& criterion, double tolerance, const vec& bound, double alpha, double xleft, double xright) const {
+std::tuple<vec, unsigned> IterativeSolver::SORProjected_lowerelementwise(double omega, const StoppingCriterion& criterion, double tolerance, const vec& bound, double alpha) const {
     
     mat R;
     vec c;
@@ -335,6 +336,6 @@ std::tuple<vec, unsigned> IterativeSolver::SORProjected_lowerelementwise(double 
 //    std::cout << R << std::endl;
 //    std::cout << c << std::endl;
     
-    return this->RecursionProjected_lowerelementwise(x0_, R, c, A_, b_, criterion, tolerance, bound, alpha, xleft, xright);
+    return this->RecursionProjected_lowerelementwise(x0_, R, c, A_, b_, criterion, tolerance, bound, alpha);
 }
 

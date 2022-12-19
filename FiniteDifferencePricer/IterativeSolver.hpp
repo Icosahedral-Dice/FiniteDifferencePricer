@@ -32,7 +32,7 @@ private:
     
     std::tuple<vec, unsigned> RecursionProjected_lower(const vec& x0, const mat& R, const vec& c, const mat& A, const vec& b, const StoppingCriterion& criterion, const double tolerance, const vec& bound) const;
     
-    std::tuple<vec, unsigned> RecursionProjected_lowerelementwise(const vec& x0, const mat& R, const vec& c, const mat& A, const vec& b, const StoppingCriterion& criterion, const double tolerance, const vec& bound, double alpha, double xleft, double xright) const;
+    std::tuple<vec, unsigned> RecursionProjected_lowerelementwise(const vec& x0, const mat& R, const vec& c, const mat& A, const vec& b, const StoppingCriterion& criterion, const double tolerance, const vec& bound, double alpha) const;
     
 public:
     IterativeSolver(const mat& A, const vec& b);
@@ -45,7 +45,7 @@ public:
     std::tuple<vec, unsigned> SOR(double omega, const StoppingCriterion& criterion, double tolerance) const;
     
     std::tuple<vec, unsigned> SORProjected_lower(double omega, const StoppingCriterion& criterion, double tolerance, const vec& bound) const;
-    std::tuple<vec, unsigned> SORProjected_lowerelementwise(double omega, const StoppingCriterion& criterion, double tolerance, const vec& bound, double alpha, double xleft, double xright) const;
+    std::tuple<vec, unsigned> SORProjected_lowerelementwise(double omega, const StoppingCriterion& criterion, double tolerance, const vec& bound, double alpha) const;
 };
 
 #endif /* IterativeSolver_hpp */

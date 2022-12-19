@@ -404,7 +404,7 @@ void FiniteDifferenceEngine::StepImExAmer(double tau, double alpha, const std::v
     IterativeSolver solver(A, b, early_ex_premium);
     vec sol(b.size());
 
-    std::tie(sol, std::ignore) = solver.SORProjected_lowerelementwise(omega, StoppingCriterion::consecutive, tolerance, early_ex_premium, alpha, u_mesh.front(), old_right_boundary);
+    std::tie(sol, std::ignore) = solver.SORProjected_lowerelementwise(omega, StoppingCriterion::consecutive, tolerance, early_ex_premium, alpha);
     
     
     // Assign to new u_mesh
