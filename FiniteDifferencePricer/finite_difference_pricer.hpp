@@ -85,6 +85,7 @@ public:
     static std::size_t M_init_;
     
     std::vector<double> Price(std::size_t M, const Euler& euler, const OptionType& option_type);
+    std::vector<double> Price(std::size_t M, std::size_t N, const Euler& euler, const OptionType& option_type);
     
     friend class FiniteDifferenceEngine;
     

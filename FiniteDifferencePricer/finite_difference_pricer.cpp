@@ -41,6 +41,37 @@ void FiniteDifferencePricer::PrintVector(const std::vector<double>& vec) const {
 
 // MARK: Pricing function exposed to user
 
+std::vector<double> FiniteDifferencePricer::Price(std::size_t M, std::size_t N, const Euler& euler, const OptionType& option_type) {
+    
+    std::vector<double> res;
+    
+    double dtau = tau_final_ / M;
+    double dx = (x_r_ - x_l_) / N;
+    double alpha = dtau / (dx * dx);
+//    std::cout << alpha << std::endl;
+    
+    this->GenerateBoundaryConditions(option_type);
+    
+    // 3. Finite difference scheme
+    // Fill x mesh
+    std::vector<double> x_mesh;
+    std::size_t interval_i; // Interval where x_mesh is contained
+    std::tie(x_mesh, interval_i) = this->BuildMesh(N, dx);
+    
+    // Finite difference scheme
+    std::vector<std::vector<double>> u_meshes = this->FiniteDifference(alpha, x_mesh, M, dtau, euler, option_type);
+    std::vector<double> u_mesh = u_meshes[0];
+    std::vector<double> u_mesh_prev = u_meshes[1];
+    
+    // 4. Pointwise convergence
+    std::vector<double> approximations = this->FindValue(x_mesh, u_mesh, dx);
+    res.insert(res.end(), approximations.cbegin(), approximations.cend());
+    double V_approx = approximations.front();
+    
+    return res;
+    
+}
+
 std::vector<double> FiniteDifferencePricer::Price(std::size_t M, const Euler& euler, const OptionType& option_type) {
     
     std::vector<double> res;

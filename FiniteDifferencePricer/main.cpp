@@ -89,6 +89,74 @@ void AmericanDiscDiv(double alpha = .4) {
     PrintVector(pricer.PriceCall(4, ImEx, American));
 }
 
+void Final() {
+    EuropeanOption option(0., 42., 45., 8. / 12., 0.18820914, .04, .02);
+    FiniteDifferencePricer pricer(option);
+    
+    std::cout << pricer.Price(200, 40, ImEx, American)[0] << std::endl;
+}
+
+double IV() {
+//    double S = 42.;
+//    double K = 45.;
+//    double T = 8. / 12.;
+//    double r = 0.04;
+//    double q = 0.02;
+    
+    double V0 = 4.09;
+    
+    double tol_approx = std::pow(10., -4);
+    
+    double sig_last = .1;
+    double sig_new = .5;
+    
+    EuropeanOption option_new(0., 42., 45., 8. / 12., sig_new, .04, .02);
+    FiniteDifferencePricer pricer_new(option_new);
+    double v_new = pricer_new.Price(2000, 400, ImEx, American).front();
+    
+    EuropeanOption option_last(0., 42., 45., 8. / 12., sig_last, .04, .02);
+    FiniteDifferencePricer pricer_last(option_last);
+    double v_last = pricer_last.Price(2000, 400, ImEx, American).front();
+    
+    while (std::abs(sig_new - sig_last) >= tol_approx) {
+        // Secant method
+        double sig_newest = sig_new - (v_new - V0) * (sig_new - sig_last) / (v_new - v_last);
+
+        sig_last = sig_new;
+        sig_new = sig_newest;
+        v_last = v_new;
+        EuropeanOption option_newest(0., 42., 45., 8. / 12., sig_newest, .04, .02);
+        FiniteDifferencePricer pricer_newest(option_newest);
+        v_new = pricer_newest.Price(2000, 400, ImEx, American).front();
+        std::cout << "Sig:\t" << sig_new << std::endl;
+    }
+    
+    return sig_new;
+//    EuropeanPut new_put(S_, K_, T_, sig_new, r_, q_);
+//    EuropeanPut last_put(S_, K_, T_, sig_last, r_, q_);
+//
+//    double tol_approx = std::pow(10, -4);
+//
+//    while (std::abs(sig_new - sig_last) >= tol_approx) {
+//        EuropeanOption option_new(0., 42., 45., 8. / 12., .3, .04, .02);
+//        FiniteDifferencePricer pricer_new(option);
+//
+//        EuropeanPut new_put(S_, K_, T_, sig_new, r_, q_);
+//        EuropeanPut last_put(S_, K_, T_, sig_last, r_, q_);
+//
+//        double v_new = new_put.BinomialTree(steps, modifier).value;
+//        double v_last = last_put.BinomialTree(steps, modifier).value;
+//
+//        // Secant method
+//        double sig_newest = sig_new - (v_new - V0_) * (sig_new - sig_last) / (v_new - v_last);
+//
+//        sig_last = sig_new;
+//        sig_new = sig_newest;
+//    }
+//
+//    return sig_new;
+}
+
 
 int main(int argc, const char * argv[]) {
     
@@ -102,10 +170,10 @@ int main(int argc, const char * argv[]) {
     
 //    American_imex(.45);
 //    American_imex(5.);
-    std::cout << std::fixed << std::setprecision(6);
+    std::cout << std::fixed << std::setprecision(8);
     
-    
-    AmericanDiscDiv(.4);
+    Final();
+//    std::cout << IV() << std::endl;
     
     
     return 0;

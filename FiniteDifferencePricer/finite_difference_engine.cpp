@@ -177,7 +177,7 @@ std::vector<std::vector<double>> FiniteDifferenceEngine::FullImExAmer(double alp
     // Fill u mesh with boundary condition
     std::vector<double> u_mesh(x_mesh.size());
     std::transform(x_mesh.cbegin(), x_mesh.cend(), u_mesh.begin(), pricer_->boundary_tau_0_);
-    this->PrintVector(u_mesh);
+//    this->PrintVector(u_mesh);
     
     mat A(mat::Zero(x_mesh.size() - 2, x_mesh.size() - 2));   // Initialize with zero matrix
     A(0, 0) = 1. + alpha;
@@ -203,13 +203,16 @@ std::vector<std::vector<double>> FiniteDifferenceEngine::FullImExAmer(double alp
     for (std::size_t i = 1; i < M; i++) {
         double curr_tau = dtau * i;
         this->StepImExAmer(curr_tau, alpha, x_mesh, u_mesh, A, b_multiplier);
-        this->PrintVector(u_mesh);
+//        this->PrintVector(u_mesh);
+        if (i % 100 == 0) {
+            std::cout << i << std::endl;
+        }
     }
     
     // Record the (M-1)th u_mesh for theta calculation
     std::vector<double> u_mesh_prev = u_mesh;
     this->StepImExAmer(pricer_->tau_final_, alpha, x_mesh, u_mesh, A, b_multiplier);
-    this->PrintVector(u_mesh);
+//    this->PrintVector(u_mesh);
     
     return std::vector<std::vector<double>>({u_mesh, u_mesh_prev});
 }
@@ -353,7 +356,6 @@ void FiniteDifferenceEngine::StepExplAmerFindEarlyExBoundary(double tau, double 
 //    void FiniteDifferenceEngine::StepImplAmer(double tau, double alpha, const std::vector<double>& x_mesh, std::vector<double>& u_mesh, const mat& L, const mat& U) const {}
 
 void FiniteDifferenceEngine::StepImExAmer(double tau, double alpha, const std::vector<double>& x_mesh, std::vector<double>& u_mesh, const mat& A, const mat& b_multiplier) const {
-    
     // Prepare b
     vec b(u_mesh.size() - 2);
     
@@ -400,7 +402,7 @@ void FiniteDifferenceEngine::StepImExAmer(double tau, double alpha, const std::v
 
     // Solve linear system
     double tolerance = std::pow(10, -6);
-    double omega = 1.2;
+    double omega = 1.1;
 
     IterativeSolver solver(A, b, early_ex_premium);
     vec sol(b.size());
